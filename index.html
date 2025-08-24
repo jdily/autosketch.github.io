@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- <meta name="description"
+        content="Deformable Neural Radiance Fields creates free-viewpoint portraits (nerfies) from casually captured videos."> -->
+  <!-- <meta name="keywords" content="AutoSketch, Sketch"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AutoSketch: VLM-assisted Style-Aware Vector Sketch Completion</title>
+
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/autosketch_icon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://keunhong.com">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://hypernerf.github.io">
+            HyperNeRF
+          </a>
+          <a class="navbar-item" href="https://nerfies.github.io">
+            Nerfies
+          </a>
+          <a class="navbar-item" href="https://latentfusion.github.io">
+            LatentFusion
+          </a>
+          <a class="navbar-item" href="https://photoshape.github.io">
+            PhotoShape
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</nav> -->
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">AutoSketch: VLM-assisted Style-Aware Vector Sketch Completion</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://www.linkedin.com/in/jessiechin727/?originalSubdomain=tw">Hsiao-Yuan Chin</a><sup>1*</sup>, <a href="https://jdily.github.io/">I-Chao Shen</a><sup>2*</sup>, Yi-Ting Chiu<sup>1</sup>, <a href="https://faculty.runi.ac.il/arik/site/index.asp">Ariel Shamir</a><sup>3</sup>, <a href="https://graphics.cmlab.csie.ntu.edu.tw/~robin/">Bing-Yu Chen</a><sup>1</sup>
+            </span>
+          </div>
+
+          <div class="is-size-6 publication-authors">
+            <span class="author-block"><sup>1</sup>National Taiwan University, Taiwan </span>
+            <span class="author-block"><sup>2</sup>The University of Tokyo, Japan</span>
+            <span class="author-block"><sup>3</sup>Reichman University, Israel</span>
+          </div>
+          <div class="is-size-4">
+            <a href="https://asia.siggraph.org/2025/">SIGGRAPH ASIA 2025</a>
+          </div>
+          <div class="publication-links">
+      <span class="link-block">
+        <a
+          href="https://arxiv.org/abs/2502.06860"
+          class="external-link button is-normal is-rounded is-dark"
+        >
+          <span class="icon">
+            <i class="ai ai-arxiv"></i>
+          </span>
+          <span>arXiv</span>
+        </a>
+      </span>
+      <!-- Video Link. -->
+      <span class="link-block">
+        <a
+          class="external-link button is-normal is-rounded is-dark"
+        >
+          <span class="icon">
+            <i class="fab fa-youtube"></i>
+          </span>
+          <span>Video (Coming soon)</span>
+        </a>
+      </span>
+      <!-- Code Link. -->
+      <span class="link-block">
+        <a
+          class="external-link button is-normal is-rounded is-dark"
+        >
+          <span class="icon">
+            <i class="fab fa-github"></i>
+          </span>
+          <span>Code (Coming soon)</span>
+        </a>
+      </span>
+    </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video controls id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/video_opening.mp4"
+                type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        <span class="dnerf">AutoSketch</span> completes partial sketch given the user-speicified prompt.
+      </h2>
+    </div>
+  </div>
+</section> -->
+
+
+<!-- <section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-steve">
+          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/steve.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-chair-tp">
+          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/chair-tp.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-shiba">
+          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/shiba.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-fullbody">
+          <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/fullbody.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-blueshirt">
+          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/blueshirt.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-mask">
+          <video poster="" id="mask" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/mask.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-coffee">
+          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/coffee.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-toby">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/toby2.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <div class="content has-text-justified">
+          <img src="./static/images/teaser_v3.png" class="teaser-image" alt="FontCraft teaser image.">     
+        </div> 
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+            <p>Sketches are an important medium of expression and recently many works
+concentrate on automatic sketch creations. One such ability very useful for
+amateurs is text-based completion of a partial sketch to create a complex
+scene, while preserving the style of the partial sketch. Existing methods
+focus solely on generating sketch that match the content in the input prompt
+in a predefined style, ignoring the styles of the input partial sketches, e.g., the
+global abstraction level and local stroke styles. To address this challenge,
+we introduce AutoSketch, a style-aware vector sketch completion method
+that accommodates diverse sketch styles and supports iterative sketch completion.
+AutoSketch completes the input sketch in a style-consistent manner
+using a two-stage method. In the first stage, we initially optimize the
+strokes to match an input prompt augmented by style descriptions extracted
+from a vision-language model (VLM). Such style descriptions lead to nonphotorealistic
+guidance images which enable more content to be depicted
+through new strokes. In the second stage, we utilize the VLM to adjust
+the strokes from the previous stage to adhere to the style present in the
+input partial sketch through an iterative style adjustment process. In each
+iteration, the VLM identifies a list of style differences between the input
+sketch and the strokes generated in the previous stage, translating these
+differences into adjustment codes to modify the strokes. We compare our
+method with existing methods using various sketch styles and prompts, perform
+extensive ablation studies and qualitative and quantitative evaluations,
+and demonstrate that AutoSketch can support diverse sketching scenarios.</p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Re-rendering. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">  
+        <h2 class="title is-3">Sketch completion results</h2>
+        <div class="content has-text-justified">
+          <!-- <p>
+            Using <span class="dnerf">Nerfies</span>, you can re-render a video from a novel
+            viewpoint such as a stabilized camera by playing back the training deformations.
+          </p> -->
+        </div>
+        <div class="content has-text-centered">
+          <div>
+            <img src="./static/images/completion_comparison_results.png"
+                class="interpolation-image"
+                alt="Interpolation end reference image."/>
+          </div>
+        </div>
+      </div>
+    </div>
+   <!-- Iterative sketch completion. -->
+   <div class="columns is-centered">
+    <div class="column is-full-width">
+      <!-- Interpolating. -->
+      <h2 class="title is-3">Iterative Sketch Completion</h2>
+      <div class="content has-text-justified">
+        <p>
+          After the initial sketch completion, the user can keep the strokes generated in the first completion and (a) edit the sketch or (b) update the input prompt .
+          Then, our method will complete the sketch once again to add more details.
+          (The blue and green line denotes the input partial sketch of the first and second iteration, respectively.)
+        </p>
+      </div>
+      <div class="columns is-vcentered interpolation-panel">
+        <div>
+          <img src="./static/images/iter_edit_examples.png"
+               class="interpolation-image"
+               alt="Interpolation end reference image."/>
+        </div>
+      </div>
+      <br/>
+      <!--/ Interpolating. -->
+    </div>
+  </div>
+    <!--/ Re-rendering. -->
+    <div class="columns is-centered">
+      <!-- Visual Effects. -->
+      <div class="column">
+        <div class="content">
+          <h2 class="title is-3">Same prompt, different partial sketches</h2>
+          <p>
+            Given the same prompt, our method can generate completed sketches that depict the same content in different styles that align with those of the user-provided partial sketches.
+          </p>
+          <img src="./static/images/diff_sketch_scenario.png"
+          class="interpolation-image"
+          alt="Interpolation end reference image."/>
+        </div>
+      </div>
+      <!--/ Visual Effects. -->
+
+      <!-- Matting. -->
+      <div class="column">
+        <h2 class="title is-3">Same partial sketch, different prompts</h2>
+        <div class="columns is-centered">
+          <div class="column content">
+            <p>
+              Given the same partial sketch, our method can generate different completed sketches representing the contents of various prompts.
+            </p>
+            <img src="./static/images/diff_prompt_scenario.png"
+            class="interpolation-image"
+            alt="Interpolation end reference image."/>
+          </div>
+
+        </div>
+      </div>
+       <!--/ Matting. -->
+    </div>
+
+  </div>
+</section>
+
+
+
+<footer class="footer">
+  <div class="container">
+    <!-- <div class="content has-text-centered">
+      <a class="icon-link"
+         href="./static/videos/nerfies_paper.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div> -->
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            The website template was borrowed from <a
+              href="https://nerfies.github.io/">Nerfies</a>. 
+              If you want to reuse their <a
+              href="https://github.com/nerfies/nerfies.github.io">source code</a>, please credit them appropriately.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
